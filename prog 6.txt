@@ -1,0 +1,45 @@
+#include <stdio.h>
+int main() {
+    int n, bt[20], rt[20], pr[20];
+    int i, complete = 0, time = 0, shortest;
+    int finish, wt[20], tat[20];
+    float avgwt = 0, avgtat = 0;
+    int min;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+    for(i = 0; i < n; i++) {
+        printf("\nBurst Time of P%d: ", i + 1);
+        scanf("%d", &bt[i]);
+        printf("Priority of P%d: ", i + 1);
+        scanf("%d", &pr[i]);
+        rt[i] = bt[i];
+    }
+    while(complete != n) {
+        min = 9999;
+        shortest = -1;
+        for(i = 0; i < n; i++) {
+            if(rt[i] > 0 && pr[i] < min) {
+                min = pr[i];
+                shortest = i;
+            }
+        }
+        rt[shortest]--;
+        if(rt[shortest] == 0) {
+            complete++;
+            finish = time + 1;
+            wt[shortest] = finish - bt[shortest];
+            if(wt[shortest] < 0)
+                wt[shortest] = 0;
+            tat[shortest] = wt[shortest] + bt[shortest];
+            avgwt += wt[shortest];
+            avgtat += tat[shortest];
+        }
+        time++;
+    }
+    printf("\nProcess\tBT\tPriority\tWT\tTAT\n");
+    for(i = 0; i < n; i++)
+        printf("P%d\t%d\t%d\t\t%d\t%d\n", i + 1, bt[i], pr[i], wt[i], tat[i]);
+    printf("\nAverage Waiting Time = %.2f", avgwt / n);
+    printf("\nAverage Turnaround Time = %.2f", avgtat / n);
+    return 0;
+}
