@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    int shmid;
+    char *str;
+
+    shmid = shmget(IPC_PRIVATE, 100, 0666 | IPC_CREAT);
+    if (shmid == -1) {
+        perror("shmget");
+        return 1;
+    }
+
+    str = (char *)shmat(shmid, NULL, 0);
+
+    if (str == (char *)-1) {
+        perror("shmat");
+        return 1;
+    }
+
+    if (fork() == 0) {
+        sleep(1);
+        printf("Child received: %s\n", str);
+        shmdt(str);
+    } else {
+        sprintf(str, "Hello from Parent");
+        wait(NULL);
+        shmdt(str);
+        shmctl(shmid, IPC_RMID, NULL);
+    }
+
+    return 0;
+}
