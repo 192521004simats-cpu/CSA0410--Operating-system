@@ -1,0 +1,47 @@
+#include <stdio.h>
+
+void allocate(int b[], int m, int p[], int n, int type) {
+    int a[20], i, j, k;
+
+    for (i = 0; i < m; i++)
+        a[i] = b[i];
+
+    printf("\n");
+
+    for (i = 0; i < n; i++) {
+        k = -1;
+
+        for (j = 0; j < m; j++) {
+            if (a[j] >= p[i]) {
+                if (k == -1 ||
+                    (type == 1 && a[j] < a[k]) ||
+                    (type == 2 && a[j] > a[k]))
+                    k = j;
+            }
+        }
+
+        if (k != -1) {
+            printf("Process %d -> Block %d\n", i + 1, k + 1);
+            a[k] -= p[i];
+        } else {
+            printf("Process %d -> Not Allocated\n", i + 1);
+        }
+    }
+}
+
+int main() {
+    int b[] = {100, 500, 200, 300, 600};
+    int p[] = {212, 417, 112, 426};
+    int m = 5, n = 4;
+
+    printf("FIRST FIT\n");
+    allocate(b, m, p, n, 0);
+
+    printf("\nBEST FIT\n");
+    allocate(b, m, p, n, 1);
+
+    printf("\nWORST FIT\n");
+    allocate(b, m, p, n, 2);
+
+    return 0;
+}
