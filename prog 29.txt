@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int main() {
+    int index_block = 12;
+    int index_entries[] = {4, 7, 9, 21}; 
+    int total_blocks = sizeof(index_entries) / sizeof(index_entries[0]);
+
+    printf("Index Block: %d\n", index_block);
+    printf("Index Mapping Registry Matrix:\n");
+    for (int i = 0; i < total_blocks; i++) {
+        printf("Logical Index structural entry [%d] ------> Points to Physical Block: %d\n", i, index_entries[i]);
+    }
+
+    int query_index = 2;
+    printf("\nDirect Mapping resolution for item entry index %d:\n", query_index);
+    printf("Resolved: Block address is %d\n", index_entries[query_index]);
+    
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
