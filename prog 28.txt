@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+
+struct File {
+    char name[20];
+    int start_block;
+    int length;
+};
+
+int main() {
+    int total_blocks = 50;
+    int disk[50] = {0};
+    struct File files[10];
+    int file_count = 0;
+
+    strcpy(files[file_count].name, "file1.txt");
+    files[file_count].start_block = 5;
+    files[file_count].length = 4;
+    
+    int can_allocate = 1;
+    for (int i = files[file_count].start_block; i < files[file_count].start_block + files[file_count].length; i++) {
+        if (disk[i] == 1) {
+            can_allocate = 0;
+            break;
+        }
+    }
+    
+    if (can_allocate) {
+        for (int i = files[file_count].start_block; i < files[file_count].start_block + files[file_count].length; i++) {
+            disk[i] = 1;
+        }
+        printf("File '%s' allocated contiguously from block %d to %d.\n", 
+               files[file_count].name, files[file_count].start_block, files[file_count].start_block + files[file_count].length - 1);
+        file_count++;
+    }
+
+    int target_offset = 2;
+    printf("\nAccessing record at index offset %d inside '%s':\n", target_offset, files[0].name);
+    for (int i = 0; i <= target_offset; i++) {
+        printf(" -> Reading structural memory block: %d\n", files[0].start_block + i);
+    }
+    printf("Record found successfully.\n");
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
