@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct DiskBlock {
+    int block_number;
+    struct DiskBlock* next;
+};
+
+struct DirectoryEntry {
+    char file_name[20];
+    struct DiskBlock* first;
+    struct DiskBlock* last;
+};
+
+int main() {
+    struct DirectoryEntry file;
+    struct DiskBlock* b1 = (struct DiskBlock*)malloc(sizeof(struct DiskBlock));
+    struct DiskBlock* b2 = (struct DiskBlock*)malloc(sizeof(struct DiskBlock));
+    struct DiskBlock* b3 = (struct DiskBlock*)malloc(sizeof(struct DiskBlock));
+
+    b1->block_number = 14;
+    b2->block_number = 4;
+    b3->block_number = 33;
+
+    b1->next = b2;
+    b2->next = b3;
+    b3->next = NULL;
+
+    file.first = b1;
+    file.last = b3;
+
+    printf("File Linked Path Directory Pointers:\n");
+    printf("Head Node Block Reference: %d\n", file.first->block_number);
+    printf("Tail Node Block Reference: %d\n", file.last->block_number);
+
+    printf("\nTraversing Linked Allocated Block Data Chain:\n");
+    struct DiskBlock* current = file.first;
+    while (current != NULL) {
+        printf("Block [%d]", current->block_number);
+        if(current->next) printf(" -> ");
+        current = current->next;
+    }
+    printf(" -> NULL\n");
+
+    free(b1); free(b2); free(b3);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
