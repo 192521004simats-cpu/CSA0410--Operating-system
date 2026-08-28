@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+
+sem_t wrt;        
+sem_t mutex;        
+int read_count = 0; 
+int shared_data = 0;
+
+void* reader(void* rno) {
+    long r_id = (long)rno;
+
+    sem_wait(&mutex);
+    read_count++;
+    if (read_count == 1) {
+        sem_wait(&wrt); 
+    }
+    sem_post(&mutex);
+
+    printf("Reader %ld: read shared data as %d\n", r_id, shared_data);
+    sleep(1); 
+
+    sem_wait(&mutex);
+    read_count--;
+    if (read_count == 0) {
+        sem_post(&wrt);
+    }
+    sem_post(&mutex);
+    
+    pthread_exit(NULL);
+}
+
+void* writer(void* wno) {
+    long w_id = (long)wno;
+
+    sem_wait(&wrt);
+
+    shared_data += 5;
+    printf("Writer %ld: updated shared data to %d\n", w_id, shared_data);
+    sleep(1);
+
+    sem_post(&wrt);
+    
+    pthread_exit(NULL);
+}
+
+int main() {
+    pthread_t r[3], w[2];
+    sem_init(&mutex, 0, 1);
+    sem_init(&wrt, 0, 1);
+
+    pthread_create(&r[0], NULL, reader, (void*)1);
+    pthread_create(&w[0], NULL, writer, (void*)1);
+    pthread_create(&r[1], NULL, reader, (void*)2);
+    pthread_create(&w[1], NULL, writer, (void*)2);
+    pthread_create(&r[2], NULL, reader, (void*)3);
+
+    for(int i = 0; i < 3; i++) pthread_join(r[i], NULL);
+    for(int i = 0; i < 2; i++) pthread_join(w[i], NULL);
+
+    sem_destroy(&mutex);
+    sem_destroy(&wrt);
+    return 0;
+}
+
+
