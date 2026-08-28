@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void sort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void scan_disk_scheduling(int requests[], int n, int head, int disk_size, int direction) {
+    int total_seek_count = 0;
+    int current_track = head;
+
+    int size = n + 1; 
+    int arr[20];
+    for (int i = 0; i < n; i++) arr[i] = requests[i];
+    
+        arr[n] = 0;
+    } else {
+        arr[n] = disk_size - 1;
+    }
+    size = n + 1;
+
+    sort(arr, size);
+
+    int pivot = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] >= head) {
+            pivot = i;
+            break;
+        }
+    }
+
+    printf("\nSCAN Order of Execution Path:\n%d", head);
+
+    if (direction == 1) { 
+        for (int i = pivot; i < size; i++) {
+            if (arr[i] >= head) {
+                printf(" -> %d", arr[i]);
+                total_seek_count += abs(arr[i] - current_track);
+                current_track = arr[i];
+            }
+        }
+        for (int i = pivot - 1; i >= 0; i--) {
+            printf(" -> %d", arr[i]);
+            total_seek_count += abs(arr[i] - current_track);
+            current_track = arr[i];
+        }
+    } else { 
+        for (int i = pivot - 1; i >= 0; i--) {
+            printf(" -> %d", arr[i]);
+            total_seek_count += abs(arr[i] - current_track);
+            current_track = arr[i];
+        }
+        for (int i = pivot; i < size - 1; i++) {
+            printf(" -> %d", arr[i]);
+            total_seek_count += abs(arr[i] - current_track);
+            current_track = arr[i];
+        }
+    }
+
+    printf("\n\nTotal Seek Operations Count: %d\n", total_seek_count);
+}
+
+int main() {
+    int requests[] = {98, 183, 37, 122, 14, 124, 65, 67};
+    int n = sizeof(requests) / sizeof(requests[0]);
+    int head = 53;
+    int disk_size = 200;
+    int direction = 1;
+
+    scan_disk_scheduling(requests, n, head, disk_size, direction);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
