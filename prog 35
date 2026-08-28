@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+
+int main() {
+    int fd;
+    char buffer[100];
+    struct stat st;
+    DIR *dir;
+    struct dirent *entry;
+
+    /* fcntl */
+    fd = open("sample.txt", O_RDWR | O_CREAT, 0644);
+    printf("File opened. FD = %d\n", fd);
+
+    fcntl(fd, F_SETFL, O_APPEND);
+    printf("fcntl() executed successfully\n");
+
+    /* write */
+    write(fd, "Hello UNIX\n", 11);
+
+    /* lseek */
+    lseek(fd, 0, SEEK_SET);
+    printf("lseek() executed successfully\n");
+
+    /* stat */
+    stat("sample.txt", &st);
+    printf("File Size = %ld bytes\n", st.st_size);
+
+    /* opendir and readdir */
+    dir = opendir(".");
+    printf("\nDirectory contents:\n");
+
+    while((entry = readdir(dir)) != NULL)
+        printf("%s\n", entry->d_name);
+
+    closedir(dir);
+    close(fd);
+
+    return 0;
+}
