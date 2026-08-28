@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
+
+pthread_t thread_one_id, thread_two_id;
+
+void* worker_function(void* arg) {
+    long thread_num = (long)arg;
+    pthread_t current_id = pthread_self();
+
+    printf("Thread %ld initialized execution execution pipeline.\n", thread_num);
+
+    if (pthread_equal(current_id, thread_one_id)) {
+        printf(" -> Status verification confirmation: Match validated for Thread 1\n");
+    } else {
+        printf(" -> Status verification confirmation: Worker identity does not match Thread 1\n");
+    }
+
+    sleep(1);
+    printf("Thread %ld finished execution. Calling termination routines.\n", thread_num);
+    
+    pthread_exit(NULL); 
+}
+
+int main() {
+    int status_1 = pthread_create(&thread_one_id, NULL, worker_function, (void*)1);
+    int status_2 = pthread_create(&thread_two_id, NULL, worker_function, (void*)2);
+
+    if (status_1 != 0 || status_2 != 0) {
+        printf("Failed to allocate thread entities.\n");
+        return 1;
+    }
+
+    printf("Main thread waiting for children execution blocks to close down.\n");
+
+    pthread_join(thread_one_id, NULL);
+    pthread_join(thread_two_id, NULL);
+
+    printf("All thread channels have resolved successfully. Program exit status complete.\n");
+    return 0;
+}
